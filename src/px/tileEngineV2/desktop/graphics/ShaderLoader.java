@@ -1,4 +1,4 @@
-package px.tileEngineV2.graphics;
+package px.tileEngineV2.desktop.graphics;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

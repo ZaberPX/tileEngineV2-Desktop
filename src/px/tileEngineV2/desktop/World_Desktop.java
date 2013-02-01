@@ -1,4 +1,4 @@
-package px.tileEngineV2;
+package px.tileEngineV2.desktop;
 
 import px.tileEngineV2.world.World;
 

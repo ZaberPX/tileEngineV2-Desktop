@@ -1,4 +1,4 @@
-package px.tileEngineV2;
+package px.tileEngineV2.desktop;
 
 import javax.swing.JFrame;
 

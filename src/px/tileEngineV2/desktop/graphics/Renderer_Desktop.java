@@ -1,4 +1,4 @@
-package px.tileEngineV2.graphics;
+package px.tileEngineV2.desktop.graphics;
 
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
@@ -7,6 +7,8 @@ import javax.media.opengl.GLEventListener;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+
+import px.tileEngineV2.graphics.Renderer;
 
 public class Renderer_Desktop extends Renderer implements GLEventListener {
     
