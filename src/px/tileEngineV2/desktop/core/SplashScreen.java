@@ -101,7 +101,7 @@ class SplashScreen implements GLEventListener {
         gl.glEnableVertexAttribArray(positionAttribute);
         gl.glVertexAttribPointer(positionAttribute, 2, GL4.GL_FLOAT, false, 4 * 4, 0);
 
-        int texcoordAttribute = gl.glGetAttribLocation(shaderProgram, "position");
+        int texcoordAttribute = gl.glGetAttribLocation(shaderProgram, "texcoord");
         gl.glEnableVertexAttribArray(texcoordAttribute);
         gl.glVertexAttribPointer(texcoordAttribute, 2, GL4.GL_FLOAT, false, 4 * 4, 2 * 4);
         

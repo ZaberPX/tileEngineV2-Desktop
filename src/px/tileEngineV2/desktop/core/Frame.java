@@ -37,11 +37,6 @@ public class Frame extends JFrame {
         glCanvas = new GLCanvas(capabilities);
         glCanvas.requestFocusInWindow();
         
-        splashScreen = new SplashScreen();
-        splashScreen.fpsAnimator = new FPSAnimator(glCanvas, 60);
-        glCanvas.addGLEventListener(splashScreen);
-        splashScreen.fpsAnimator.start();
-        
         getContentPane().add(glCanvas);
         glCanvas.setPreferredSize(new Dimension(1280, 720));
         
@@ -51,6 +46,11 @@ public class Frame extends JFrame {
         removeNotify();
         setUndecorated(true);
         addNotify();
+        
+        splashScreen = new SplashScreen();
+        splashScreen.fpsAnimator = new FPSAnimator(glCanvas, 60);
+        glCanvas.addGLEventListener(splashScreen);
+        splashScreen.fpsAnimator.start();
         
         //TODO setIconImage
         FrameControl.centerFrame(this);

@@ -11,6 +11,7 @@ uniform mat4 model;
 uniform mat4 view;
 
 void main() {
-    texcoord2 = textureTransform * vec3(texcoord, 1.0);
+    vec3 trans = textureTransform * vec3(texcoord, 1.0);
+    texcoord2 = vec2(trans.x, trans.y);
     gl_Position = view * model * vec4(position, -depth, 1.0);
 }
