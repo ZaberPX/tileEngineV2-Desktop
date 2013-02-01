@@ -6,8 +6,7 @@ out vec4 outColor;
 
 uniform sampler2D tex;
 uniform vec4 tint;
-uniform vec2 texOffset;
 
 void main() {
-    outColor = tint * texture(tex, texcoord2 + offset);
+    outColor = tint * texture(tex, texcoord2);
 }
