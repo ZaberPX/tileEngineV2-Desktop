@@ -10,9 +10,12 @@ import org.lwjgl.util.vector.Vector4f;
 
 import px.tileEngineV2.graphics.Renderer;
 
+import com.jogamp.opengl.util.FPSAnimator;
+
 public class Renderer_Desktop extends Renderer implements GLEventListener {
     
     private GL4 context;
+    private FPSAnimator animator;
 
     @Override
     public void drawQuad(int texture, Vector3f location, Vector2f size,
@@ -59,6 +62,12 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     
     public GL4 getContext() {
         return context;
+    }
+
+    @Override
+    public void start() {
+        // TODO Auto-generated method stub
+        //TODO fetch refresh rate from GameCore.
     }
     
 }

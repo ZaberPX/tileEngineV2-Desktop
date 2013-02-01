@@ -1,6 +1,6 @@
-package px.tileEngineV2.desktop;
+package px.tileEngineV2.desktop.core;
 
-import px.tileEngineV2.GameCore;
+import px.tileEngineV2.core.GameCore;
 
 public class GameCore_Desktop extends GameCore {
     

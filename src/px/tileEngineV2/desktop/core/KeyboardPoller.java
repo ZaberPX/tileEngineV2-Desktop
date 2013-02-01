@@ -1,4 +1,4 @@
-package px.tileEngineV2.desktop;
+package px.tileEngineV2.desktop.core;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
