@@ -108,9 +108,9 @@ public class KeyboardPoller implements KeyListener {
     
     // ++++ ++++ Accessors ++++ ++++
     
-    /**Returns a reference to the current KeyboardPoller singleton instance, use this method
-     * instead of manually constructing a new instance. Automatically creates an instance
-     * of KeyboardPoller if one does not currently exist.
+    /**Returns a reference to the current KeyboardPoller singleton instance, use this 
+     * method instead of manually constructing a new instance. Automatically creates an 
+     * instance of KeyboardPoller if one does not currently exist.
      * @return The currently initialized instance of KeyboardPoller. */
     public static KeyboardPoller getInstance() {
         if (instance == null) {
