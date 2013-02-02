@@ -143,7 +143,7 @@ public class ShaderLoader {
      * @return OpenGL reference number to the newly created shader program. */
     public static int loadShaders(GLAutoDrawable drawable, 
             String vertex, String fragment) {
-        return loadShaders(drawable, vertex, fragment, false, null);
+        return loadShaders(drawable, vertex, fragment, true, null);
     }
 }
 

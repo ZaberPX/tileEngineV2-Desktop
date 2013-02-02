@@ -6,11 +6,14 @@ import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import px.tileEngineV2.core.GameCore;
+import px.tileEngineV2.desktop.core.GameCore_Desktop;
 import px.tileEngineV2.graphics.Renderer;
 import px.tileEngineV2.graphics.Texture;
 import px.tileEngineV2.world.Tile;
@@ -50,9 +53,12 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     private int projUniform;
     private int tintUniform;
     
+    private Texture_Desktop tex;
+    private TextureLoader loader;
+    
     // ++++ Transformation ++++
     
-    private Matrix4f projTransform;
+    private Matrix4f projTransform = new Matrix4f();
     
     // ++++ ++++ Initialization ++++ ++++
 
@@ -63,7 +69,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         
         //OpenGL Fixed Function Configuration
         
-        gl.glClearColor(0.0f, 0.2f, 0.1f, 0.0f);
+        gl.glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
         
         gl.glEnable(GL4.GL_DEPTH_TEST);
         gl.glDepthFunc(GL4.GL_LEQUAL);
@@ -97,9 +103,9 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         float[] vertices = {
                 //Position         //Texcoord
                 -1.0f, 1.0f, 0.0f, 0.0f, //Top Left
-                -1.0f,-1.0f, 0.0f, 1.0f, //Bottom Left
-                 1.0f, 1.0f, 1.0f, 0.0f, //Top Right
-                 1.0f,-1.0f, 1.0f, 1.0f //Bottom Right
+                -1.0f,-1.0f, 0.0f, 0.5f, //Bottom Left
+                 1.0f, 1.0f, 0.5f, 0.0f, //Top Right
+                 1.0f,-1.0f, 0.5f, 0.5f //Bottom Right
         };
         
         //Store verts in a Vertex Buffer Object
@@ -122,6 +128,9 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         gl.glUseProgram(0);
         gl.glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
         gl.glBindTexture(GL4.GL_TEXTURE_2D, 0);
+        
+        loader = new TextureLoader();
+        tex = new Texture_Desktop(loader, "res/textures/splash.png");
     }
     
     // ++++ ++++ Disposal ++++ ++++
@@ -143,9 +152,40 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     // ++++ ++++ Rendering ++++ ++++
 
     @Override
-    public void drawQuad(Texture texture, Vector3f location, Vector2f size,
+    public void drawQuad(Texture texture, Vector3f location, Matrix4f model,
             Vector4f tint) {
+        gl.glBindTexture(GL4.GL_TEXTURE_2D, ((Texture_Desktop)texture).getGLTexture());
         
+        Matrix3f trans = texture.getTransform();
+        FloatBuffer transBuffer = FloatBuffer.allocate(9);
+        trans.store(transBuffer);
+        transBuffer.rewind();
+        
+        FloatBuffer modelBuffer = FloatBuffer.allocate(16);
+        model.store(modelBuffer);
+        modelBuffer.rewind();
+        
+        Matrix4f view = new Matrix4f();
+        FloatBuffer viewBuffer = FloatBuffer.allocate(16);
+        //GameCore.getInstance().getWorld().getCamera().getViewTransform()
+        //        .store(viewBuffer);
+        view.store(viewBuffer);
+        viewBuffer.rewind();
+        
+        FloatBuffer projBuffer = FloatBuffer.allocate(16);
+        projTransform.store(projBuffer);
+        projBuffer.rewind();
+        
+        gl.glUniformMatrix3fv(transUniform, 1, false, transBuffer);
+        gl.glUniform1f(depthUniform, location.z);
+        gl.glUniformMatrix4fv(modelUniform, 1, false, modelBuffer);
+        gl.glUniformMatrix4fv(viewUniform, 1, false, viewBuffer);
+        gl.glUniformMatrix4fv(projUniform, 1, false, projBuffer);
+        gl.glUniform4f(tintUniform, tint.x, tint.y, tint.z, tint.z);
+        
+        gl.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, 4);
+        
+        gl.glBindTexture(GL4.GL_TEXTURE_2D, 0);
     }
 
     @Override
@@ -164,6 +204,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         gl.glUseProgram(shaderProgram);
         gl.glBindVertexArray(vao);
         
+        drawQuad(tex, new Vector3f(), new Matrix4f(), new Vector4f(1f,1f,1f,1f));
         //TODO Draw all objects in Current World/Battle/Cutscene/Menu
         //TODO Create new view transform from World.getCamera() data.
 
@@ -187,8 +228,8 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
             scaleY = scaleX * (height/width);
         }
         
-        projTransform = Matrix4f.scale(
-                new Vector3f(scaleX, scaleY, 1f), new Matrix4f(), null);
+//        projTransform = Matrix4f.scale(
+//                new Vector3f(scaleX, scaleY, 1f), new Matrix4f(), null);
     }
     
     // ++++ ++++ Accessors ++++ ++++
@@ -203,8 +244,10 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
         //TODO fetch refresh rate from GameCore.
+        animator = new FPSAnimator(((GameCore_Desktop)GameCore.getInstance())
+                .getFrame().getCanvas(), 60);
+        animator.start();
     }
     
 }

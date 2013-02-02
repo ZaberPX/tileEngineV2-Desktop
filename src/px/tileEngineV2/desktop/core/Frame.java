@@ -2,6 +2,8 @@ package px.tileEngineV2.desktop.core;
 
 import java.awt.Dimension;
 import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
@@ -57,11 +59,79 @@ public class Frame extends JFrame {
         
         //TODO setIconImage
         FrameControl.centerFrame(this);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
     
-    public void setupFullscreenWindowed() {
+    public void setupBorderless() {
         setVisible(false);
+        cleanScreen();
+        
+        DisplayMode currentMode = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice().getDisplayMode();
+        Dimension size = new Dimension(currentMode.getWidth(), currentMode.getHeight());
+        glCanvas.setPreferredSize(size);
+        glCanvas.requestFocusInWindow();
+        
+        pack();
+        setResizable(true);
+        removeNotify();
+        setUndecorated(true);
+        addNotify();
+        
+        FrameControl.centerFrame(this);
+        setVisible(true);
+    }
+    
+    public void setupFullscreen(DisplayMode displayMode) {
+        setVisible(false);
+        cleanScreen();
+        
+        //TODO IMPORTANT: Check if the displayMode can actually be displayed by the
+        //current graphics device.
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice();
+        glCanvas.setPreferredSize(new Dimension(
+                displayMode.getWidth(), displayMode.getHeight()));
+        //TODO check if fullscreen supported
+        device.setFullScreenWindow(this);
+        //TODO check if displayMode changing supported
+        //device.setDisplayMode(displayMode);
+        this.displayMode = displayMode;
+        
+        pack();
+        setResizable(true);
+        removeNotify();
+        setUndecorated(true);
+        addNotify();
+        
+        setVisible(true);
+    }
+    
+    public void setupWindowed(Dimension windowSize) {
+        setVisible(false);
+        cleanScreen();
+        
+        glCanvas.setPreferredSize(windowSize);
+        glCanvas.requestFocusInWindow();
+        
+        pack();
+        setResizable(true);
+        removeNotify();
+        setUndecorated(false);
+        addNotify();
+        
+        FrameControl.centerFrame(this);
+        setVisible(true);
+    }
+    
+    /**Removes SplashScreen and remove fullscreen displaymode if any are in use. */
+    private void cleanScreen() {
+        //TODO Consider instead of default screen device, use preset one in config.
+        if (displayMode != null) {
+            GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                .setFullScreenWindow(null);
+        }
         if (splashScreen != null) {
             getContentPane().remove(glCanvas);
             glCanvas.destroy();
@@ -75,7 +145,11 @@ public class Frame extends JFrame {
             glCanvas.addGLEventListener(
                     (Renderer_Desktop)GameCore.getInstance().getRenderer());
         }
-        
-        
+    }
+    
+    // ++++ ++++ Accessors ++++ ++++
+    
+    public GLCanvas getCanvas() {
+        return glCanvas;
     }
 }

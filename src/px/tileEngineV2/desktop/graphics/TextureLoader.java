@@ -73,10 +73,11 @@ public class TextureLoader extends TextureCache {
         //Set Texture Parameters
         gl.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_WRAP_S, GL4.GL_REPEAT);
         gl.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_WRAP_T, GL4.GL_REPEAT);
-        gl.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MIN_FILTER, 
-                GL4.GL_LINEAR);
-        gl.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MAG_FILTER, 
-                GL4.GL_LINEAR);
+        //For slightly pixelized look, don't bother texture filtering
+//        gl.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MIN_FILTER, 
+//                GL4.GL_LINEAR);
+//        gl.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MAG_FILTER, 
+//                GL4.GL_LINEAR);
         
         //Return Reference to texture object
         return texture;

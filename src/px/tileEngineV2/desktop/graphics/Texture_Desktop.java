@@ -1,9 +1,10 @@
 package px.tileEngineV2.desktop.graphics;
 
 import px.tileEngineV2.core.GameCore;
+import px.tileEngineV2.graphics.Texture;
 import px.tileEngineV2.graphics.TextureCache;
 
-public class Texture_Desktop {
+public class Texture_Desktop extends Texture {
     
     // ++++ ++++ Data ++++ ++++
     
@@ -12,6 +13,7 @@ public class Texture_Desktop {
     // ++++ ++++ Initialization ++++ ++++
     
     public Texture_Desktop(TextureCache cache, String filename) {
+        super(cache, filename);
         glTexture = ((TextureLoader)cache).loadManagedTexturePng(
                 ((Renderer_Desktop)GameCore.getInstance().getRenderer())
                 .getAutoDrawable(), filename);

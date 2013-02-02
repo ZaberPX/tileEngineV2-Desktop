@@ -8,4 +8,15 @@ public class GameCore_Desktop extends GameCore {
     
     private Frame frame;
     
+    // ++++ ++++ Accessors ++++ ++++
+    
+    public Frame getFrame() {
+        return frame;
+    }
+    
+    // ++++ ++++ Mutators ++++ ++++
+    
+    public void setFrame(Frame frame) {
+        this.frame = frame;
+    }
 }
