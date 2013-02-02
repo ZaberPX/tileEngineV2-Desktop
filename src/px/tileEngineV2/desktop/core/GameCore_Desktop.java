@@ -6,4 +6,6 @@ public class GameCore_Desktop extends GameCore {
     
     // ++++ ++++ Data ++++ ++++
     
+    private Frame frame;
+    
 }

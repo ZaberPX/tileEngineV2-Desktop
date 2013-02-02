@@ -32,11 +32,11 @@ class SplashScreen implements GLEventListener {
     private int shaderProgram;
     
     //Uniforms
-    private int textureTransformUniform;
+    private int transUniform;
     private int depthUniform;
     private int modelUniform;
     private int viewUniform;
-    
+    private int projUniform;
     private int tintUniform;
     
     private FloatBuffer vertBuffer;
@@ -75,11 +75,11 @@ class SplashScreen implements GLEventListener {
                 "res/shaders/vertex.glsl", "res/shaders/fragment.glsl");
         gl.glUseProgram(shaderProgram);
         
-        textureTransformUniform = 
-                gl.glGetUniformLocation(shaderProgram, "textureTransform");
+        transUniform = gl.glGetUniformLocation(shaderProgram, "trans");
         depthUniform = gl.glGetUniformLocation(shaderProgram, "depth");
         modelUniform = gl.glGetUniformLocation(shaderProgram, "model");
         viewUniform = gl.glGetUniformLocation(shaderProgram, "view");
+        projUniform = gl.glGetUniformLocation(shaderProgram, "proj");
         tintUniform = gl.glGetUniformLocation(shaderProgram, "tint");
         
         float[] vertices = {
@@ -151,12 +151,14 @@ class SplashScreen implements GLEventListener {
         gl.glBindTexture(GL4.GL_TEXTURE_2D, tex);
         
         texBuffer.rewind();
-        gl.glUniformMatrix3fv(textureTransformUniform, 1, false, texBuffer);
+        gl.glUniformMatrix3fv(transUniform, 1, false, texBuffer);
         gl.glUniform1f(depthUniform, 0f);
         vertBuffer.rewind();
         gl.glUniformMatrix4fv(modelUniform, 1, false, vertBuffer);
         vertBuffer.rewind();
         gl.glUniformMatrix4fv(viewUniform, 1, false, vertBuffer);
+        vertBuffer.rewind();
+        gl.glUniformMatrix4fv(projUniform, 1, false, vertBuffer);
         gl.glUniform4f(tintUniform, 1f, 1f, 1f, 1f);
         
         gl.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, 4);

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 
+import px.tileEngineV2.graphics.TextureCache;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
@@ -17,7 +18,7 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
  * multiple times so as not to have multiple instances of the same image laoded in
  * memory.
  * @author Michael Stopa */
-public class TextureLoader {
+public class TextureLoader extends TextureCache {
     
     // ++++ ++++ Data ++++ ++++
     

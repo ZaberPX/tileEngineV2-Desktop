@@ -8,6 +8,9 @@ import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.JFrame;
 
+import px.tileEngineV2.core.GameCore;
+import px.tileEngineV2.desktop.graphics.Renderer_Desktop;
+
 import com.jogamp.opengl.util.FPSAnimator;
 
 /**JFrame object the game will actually be presented in, may be deleted and replaced when
@@ -55,5 +58,24 @@ public class Frame extends JFrame {
         //TODO setIconImage
         FrameControl.centerFrame(this);
         setVisible(true);
+    }
+    
+    public void setupFullscreenWindowed() {
+        setVisible(false);
+        if (splashScreen != null) {
+            getContentPane().remove(glCanvas);
+            glCanvas.destroy();
+            splashScreen = null;
+            
+            GLProfile profile = GLProfile.getDefault();
+            GLCapabilities capabilities = new GLCapabilities(profile);
+            glCanvas = new GLCanvas(capabilities);
+            glCanvas.requestFocusInWindow();
+            getContentPane().add(glCanvas);
+            glCanvas.addGLEventListener(
+                    (Renderer_Desktop)GameCore.getInstance().getRenderer());
+        }
+        
+        
     }
 }
