@@ -102,10 +102,10 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         
         float[] vertices = {
                 //Position         //Texcoord
-                -1.0f, 1.0f, 0.0f, 0.0f, //Top Left
-                -1.0f,-1.0f, 0.0f, 0.5f, //Bottom Left
-                 1.0f, 1.0f, 0.5f, 0.0f, //Top Right
-                 1.0f,-1.0f, 0.5f, 0.5f //Bottom Right
+                -0.5f, 0.5f, 0.0f, 0.0f, //Top Left
+                -0.5f,-0.5f, 0.0f, 1.0f, //Bottom Left
+                 0.5f, 0.5f, 1.0f, 0.0f, //Top Right
+                 0.5f,-0.5f, 1.0f, 1.0f //Bottom Right
         };
         
         //Store verts in a Vertex Buffer Object
@@ -152,7 +152,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     // ++++ ++++ Rendering ++++ ++++
 
     @Override
-    public void drawQuad(Texture texture, Vector3f location, Matrix4f model,
+    public void drawQuad(Texture texture, Matrix4f model, float depth,
             Vector4f tint) {
         gl.glBindTexture(GL4.GL_TEXTURE_2D, ((Texture_Desktop)texture).getGLTexture());
         
@@ -177,7 +177,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         projBuffer.rewind();
         
         gl.glUniformMatrix3fv(transUniform, 1, false, transBuffer);
-        gl.glUniform1f(depthUniform, location.z);
+        gl.glUniform1f(depthUniform, depth);
         gl.glUniformMatrix4fv(modelUniform, 1, false, modelBuffer);
         gl.glUniformMatrix4fv(viewUniform, 1, false, viewBuffer);
         gl.glUniformMatrix4fv(projUniform, 1, false, projBuffer);
@@ -204,7 +204,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         gl.glUseProgram(shaderProgram);
         gl.glBindVertexArray(vao);
         
-        drawQuad(tex, new Vector3f(), new Matrix4f(), new Vector4f(1f,1f,1f,1f));
+        drawQuad(tex, new Matrix4f(), 0f, new Vector4f(1f,1f,1f,1f));
         //TODO Draw all objects in Current World/Battle/Cutscene/Menu
         //TODO Create new view transform from World.getCamera() data.
 

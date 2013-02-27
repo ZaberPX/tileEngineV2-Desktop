@@ -28,9 +28,6 @@ public class GameLauncher {
     private void init() {
         gameCore.assignRenderer(renderer);
         frame.setupBorderless();
-        //frame.setupFullscreen(GraphicsEnvironment.getLocalGraphicsEnvironment()
-        //.getDefaultScreenDevice().getDisplayMode());
-        //frame.setupWindowed(new Dimension(1280, 720));
         gameCore.setFrame(frame);
         renderer.start();
     }
