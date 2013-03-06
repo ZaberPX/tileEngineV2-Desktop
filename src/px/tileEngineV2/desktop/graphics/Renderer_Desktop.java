@@ -16,6 +16,10 @@ import px.tileEngineV2.core.GameCore;
 import px.tileEngineV2.desktop.core.GameCore_Desktop;
 import px.tileEngineV2.graphics.Renderer;
 import px.tileEngineV2.graphics.Texture;
+import px.tileEngineV2.graphics.TextureCache;
+import px.tileEngineV2.ui.Window;
+import px.tileEngineV2.ui.Window.HorzAlign;
+import px.tileEngineV2.ui.Window.VertAlign;
 import px.tileEngineV2.world.Tile;
 
 import com.jogamp.opengl.util.FPSAnimator;
@@ -30,8 +34,6 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     public static final int SCREEN_MIN_SIZE = Tile.TILE_SIZE * 12;
     
     // ++++ ++++ Data ++++ ++++
-    
-    // ++++ OpenGL Management ++++
     
     //Drawing Context
     private GL4 gl;
@@ -55,6 +57,11 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     
     private Texture_Desktop tex;
     private TextureLoader loader;
+    
+    //UI Management
+    private Matrix4f uiViewTransform;
+    private float uiHorzOffset = 0;
+    private float uiVertOffset = 0;
     
     // ++++ Transformation ++++
     
@@ -130,7 +137,12 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         gl.glBindTexture(GL4.GL_TEXTURE_2D, 0);
         
         loader = new TextureLoader();
-        tex = new Texture_Desktop(loader, "res/textures/splash.png");
+        tex = new Texture_Desktop(loader, "textures/splash");
+        
+        //View Setup
+        uiViewTransform = new Matrix4f();
+        uiViewTransform.m00 = 1f/100f;
+        uiViewTransform.m11 = 1f/100f;
     }
     
     // ++++ ++++ Disposal ++++ ++++
@@ -152,7 +164,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     // ++++ ++++ Rendering ++++ ++++
 
     @Override
-    public void drawQuad(Texture texture, Matrix4f model, float depth,
+    public void drawQuadWorld(Texture texture, Matrix4f model, float depth,
             Vector4f tint) {
         gl.glBindTexture(GL4.GL_TEXTURE_2D, ((Texture_Desktop)texture).getGLTexture());
         
@@ -187,11 +199,63 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         
         gl.glBindTexture(GL4.GL_TEXTURE_2D, 0);
     }
+    
+    @Override
+    public void drawQuadUi(Texture texture, Matrix4f model, float depth,
+            Window.HorzAlign horzAlign, Window.VertAlign vertAlign, Vector4f tint) {
+        gl.glBindTexture(GL4.GL_TEXTURE_2D, ((Texture_Desktop)texture).getGLTexture());
+        
+        Matrix3f trans = texture.getTransform();
+        FloatBuffer transBuffer = FloatBuffer.allocate(9);
+        trans.store(transBuffer);
+        transBuffer.rewind();
+        
+        if (horzAlign == HorzAlign.LEFT) {
+            Matrix4f align = Matrix4f.translate(new Vector2f(-uiHorzOffset, 0f), 
+                    new Matrix4f(), null);
+            model = Matrix4f.mul(align, model, null);
+        } else if (horzAlign == HorzAlign.RIGHT) {
+            Matrix4f align = Matrix4f.translate(new Vector2f(uiHorzOffset, 0f), 
+                    new Matrix4f(), null);
+            model = Matrix4f.mul(align, model, null);
+        }
+        if (vertAlign == VertAlign.BOTTOM) {
+            Matrix4f align = Matrix4f.translate(new Vector2f(0f, -uiVertOffset), 
+                    new Matrix4f(), null);
+            model = Matrix4f.mul(align, model, null);
+        } else if (vertAlign == VertAlign.TOP) {
+            Matrix4f align = Matrix4f.translate(new Vector2f(0f, uiVertOffset), 
+                    new Matrix4f(), null);
+            model = Matrix4f.mul(align, model, null);
+        }
+        FloatBuffer modelBuffer = FloatBuffer.allocate(16);
+        model.store(modelBuffer);
+        modelBuffer.rewind();
+        
+        FloatBuffer viewBuffer = FloatBuffer.allocate(16);
+        uiViewTransform.store(viewBuffer);
+        viewBuffer.rewind();
+        
+        FloatBuffer projBuffer = FloatBuffer.allocate(16);
+        projTransform.store(projBuffer);
+        projBuffer.rewind();
+        
+        gl.glUniformMatrix3fv(transUniform, 1, false, transBuffer);
+        gl.glUniform1f(depthUniform, depth);
+        gl.glUniformMatrix4fv(modelUniform, 1, false, modelBuffer);
+        gl.glUniformMatrix4fv(viewUniform, 1, false, viewBuffer);
+        gl.glUniformMatrix4fv(projUniform, 1, false, projBuffer);
+        gl.glUniform4f(tintUniform, tint.x, tint.y, tint.z, tint.z);
+        
+        gl.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, 4);
+        
+        gl.glBindTexture(GL4.GL_TEXTURE_2D, 0);
+    }
 
     @Override
-    public void drawText(String text, Vector3f location, Vector2f size,
-            Vector4f color) {
-        // TODO Draw Text
+    public void drawText(String text, Vector3f location, Vector2f size, Vector4f color) {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override
@@ -204,7 +268,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         gl.glUseProgram(shaderProgram);
         gl.glBindVertexArray(vao);
         
-        drawQuad(tex, new Matrix4f(), 0f, new Vector4f(1f,1f,1f,1f));
+        drawQuadWorld(tex, new Matrix4f(), 0f, new Vector4f(1f,1f,1f,1f));
         //TODO Draw all objects in Current World/Battle/Cutscene/Menu
         //TODO Create new view transform from World.getCamera() data.
 
@@ -223,13 +287,17 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         if (width >= height) {
             scaleY = height / SCREEN_MIN_SIZE;
             scaleX = scaleY * (width/height);
+            uiVertOffset = 0;
+            uiHorzOffset = (width-height)/2/(height/100);
         } else {
             scaleX = width / SCREEN_MIN_SIZE;
             scaleY = scaleX * (height/width);
+            uiVertOffset = (height-width)/2/(width/100);
+            uiHorzOffset = 0;
         }
         
-//        projTransform = Matrix4f.scale(
-//                new Vector3f(scaleX, scaleY, 1f), new Matrix4f(), null);
+        projTransform = Matrix4f.scale(
+                new Vector3f(scaleX, scaleY, 1f), new Matrix4f(), null);
     }
     
     // ++++ ++++ Accessors ++++ ++++
@@ -240,6 +308,10 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
     
     public GLAutoDrawable getAutoDrawable() {
         return autoDrawable;
+    }
+    
+    public TextureCache getTextureCache() {
+        return (TextureCache) loader;
     }
 
     @Override

@@ -14,9 +14,15 @@ public class Texture_Desktop extends Texture {
     
     public Texture_Desktop(TextureCache cache, String filename) {
         super(cache, filename);
-        glTexture = ((TextureLoader)cache).loadManagedTexturePng(
-                ((Renderer_Desktop)GameCore.getInstance().getRenderer())
-                .getAutoDrawable(), filename);
+        if (cache != null) {
+            glTexture = ((TextureLoader)cache).loadManagedTexturePng(
+                    ((Renderer_Desktop)GameCore.getInstance().getRenderer())
+                    .getAutoDrawable(), filename);
+        } else {
+            glTexture = TextureLoader.loadTexturePng(
+                    ((Renderer_Desktop)GameCore.getInstance().getRenderer())
+                    .getAutoDrawable(), filename);
+        }
     }
     
     // ++++ ++++ Accessors ++++ ++++

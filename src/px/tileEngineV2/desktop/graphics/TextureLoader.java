@@ -9,6 +9,8 @@ import java.util.HashMap;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 
+import px.tileEngineV2.core.GameCore;
+import px.tileEngineV2.graphics.Texture;
 import px.tileEngineV2.graphics.TextureCache;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
@@ -48,7 +50,7 @@ public class TextureLoader extends TextureCache {
         
         //Decode texture from .png file
         try {
-            InputStream in = new FileInputStream(filename);
+            InputStream in = new FileInputStream("res/" + filename + ".png");
             PNGDecoder decoder = new PNGDecoder(in);
             
             width = decoder.getWidth();
@@ -110,6 +112,11 @@ public class TextureLoader extends TextureCache {
         textures.put(filename, texture);
         
         return texture;
+    }
+
+    @Override
+    public Texture getTexture(String filename) {
+        return new Texture_Desktop(this, filename);
     }
     
     // ++++ ++++ Disposal ++++ ++++

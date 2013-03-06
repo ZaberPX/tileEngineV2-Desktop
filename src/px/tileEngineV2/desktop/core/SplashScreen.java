@@ -106,7 +106,7 @@ class SplashScreen implements GLEventListener {
         gl.glVertexAttribPointer(texcoordAttribute, 2, GL4.GL_FLOAT, false, 4 * 4, 2 * 4);
         
         //Load Texture
-        tex = TextureLoader.loadTexturePng(drawable, "res/textures/splash.png");
+        tex = TextureLoader.loadTexturePng(drawable, "textures/splash");
         
         //Setup Buffer loaded with identity matrix (no transforms)
         Matrix4f matrix = new Matrix4f();
