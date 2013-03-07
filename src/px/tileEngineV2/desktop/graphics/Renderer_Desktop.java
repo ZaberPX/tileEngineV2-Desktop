@@ -12,6 +12,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import px.tileEngineV2.actors.Actor;
 import px.tileEngineV2.core.GameCore;
 import px.tileEngineV2.desktop.core.GameCore_Desktop;
 import px.tileEngineV2.graphics.Renderer;
@@ -105,6 +106,7 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         depthUniform = gl.glGetUniformLocation(shaderProgram, "depth");
         modelUniform = gl.glGetUniformLocation(shaderProgram, "model");
         viewUniform = gl.glGetUniformLocation(shaderProgram, "view");
+        projUniform = gl.glGetUniformLocation(shaderProgram, "proj");
         tintUniform = gl.glGetUniformLocation(shaderProgram, "tint");
         
         float[] vertices = {
@@ -268,7 +270,9 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         gl.glUseProgram(shaderProgram);
         gl.glBindVertexArray(vao);
         
-        drawQuadWorld(tex, new Matrix4f(), 0f, new Vector4f(1f,1f,1f,1f));
+        drawQuadUi(tex, 
+                Actor.modelTransform(new Vector2f(0, 0), 0f, new Vector2f(10f, 10f)), 
+                0f, HorzAlign.CENTER, VertAlign.CENTER, new Vector4f(1f,1f,1f,1f));
         //TODO Draw all objects in Current World/Battle/Cutscene/Menu
         //TODO Create new view transform from World.getCamera() data.
 
@@ -282,16 +286,16 @@ public class Renderer_Desktop extends Renderer implements GLEventListener {
         autoDrawable = drawable;
         gl = drawable.getGL().getGL4();
 
-        int scaleX;
-        int scaleY;
+        float scaleX;
+        float scaleY;
         if (width >= height) {
-            scaleY = height / SCREEN_MIN_SIZE;
-            scaleX = scaleY * (width/height);
+            scaleY = 1f;
+            scaleX = width/height;
             uiVertOffset = 0;
             uiHorzOffset = (width-height)/2/(height/100);
         } else {
-            scaleX = width / SCREEN_MIN_SIZE;
-            scaleY = scaleX * (height/width);
+            scaleX = height/width;
+            scaleY = 1f;
             uiVertOffset = (height-width)/2/(width/100);
             uiHorzOffset = 0;
         }
